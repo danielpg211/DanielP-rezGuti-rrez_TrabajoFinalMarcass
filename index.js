@@ -112,6 +112,20 @@ app.delete('/videojuegos/:id', (req, res) => {
   }
 });
 
+app.get('/resenas', (req, res) => {
+  try {
+    let resultado = [...resenas];
+    if (req.query.videojuego_id) {
+      const vid = parseInt(req.query.videojuego_id);
+      resultado = resultado.filter(r => r.videojuego_id === vid);
+    }
+    res.json({ total: resultado.length, resenas: resultado });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+
 
 
 

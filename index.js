@@ -2,9 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Servidor de videojuegos escuchando en http://localhost:${PORT}`);
-});
+app.use(express.json());
 
 let videojuegos = [
   { id: 1,  titulo: 'Rocket League',             genero: 'deportes',  plataforma: 'PC',              precio: 0.00,  descripcion: 'Futbol con coches a alta velocidad, gratuito desde 2020.',      disponible: true,  puntuacion: 8.9, anio: 2015, desarrollador: 'Psyonix'            },
@@ -83,4 +81,8 @@ app.post('/videojuegos', (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor.' });
   }
 });
+
+
+
+
 

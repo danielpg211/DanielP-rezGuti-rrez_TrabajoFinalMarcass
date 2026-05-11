@@ -82,6 +82,21 @@ app.post('/videojuegos', (req, res) => {
   }
 });
 
+app.put('/videojuegos/:id', (req, res) => {
+  try {
+    const videojuego = videojuegos.find(v => v.id === parseInt(req.params.id));
+    if (!videojuego) {
+      return res.status(404).json({ error: `Videojuego con id ${req.params.id} no encontrado.` });
+    }
+    const campos = ['titulo', 'genero', 'plataforma', 'precio', 'descripcion', 'disponible', 'puntuacion', 'anio', 'desarrollador'];
+    campos.forEach(campo => {
+      if (req.body[campo] !== undefined) videojuego[campo] = req.body[campo];
+    });
+    res.json({ mensaje: 'Videojuego actualizado correctamente.', videojuego });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
 
 
 

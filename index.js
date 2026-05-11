@@ -36,3 +36,11 @@ let resenas = [
 ];
 
 let nextResenaId = 11;
+
+app.get('/videojuegos', (req, res) => {
+  try {
+    res.json({ total: videojuegos.length, videojuegos });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});

@@ -44,3 +44,20 @@ app.get('/videojuegos', (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor.' });
   }
 });
+
+
+app.get('/videojuegos/:id', (req, res) => {
+  try {
+    const videojuego = videojuegos.find(v => v.id === parseInt(req.params.id));
+    if (!videojuego) {
+      return res.status(404).json({ error: `Videojuego con id ${req.params.id} no encontrado.` });
+    }
+    res.json(videojuego);
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor de videojuegos escuchando en http://localhost:${PORT}`);
+});

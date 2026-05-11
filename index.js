@@ -126,6 +126,32 @@ app.get('/resenas', (req, res) => {
 });
 
 
+app.post('/resenas', (req, res) => {
+  try {
+    const { videojuego_id, autor, comentario, puntuacion, fecha } = req.body;
+    if (!videojuego_id || !autor || !comentario || puntuacion === undefined) {
+      return res.status(400).json({ error: 'Faltan campos: videojuego_id, autor, comentario, puntuacion.' });
+    }
+    const juego = videojuegos.find(v => v.id === parseInt(videojuego_id));
+    if (!juego) {
+      return res.status(404).json({ error: `No existe videojuego con id ${videojuego_id}.` });
+    }
+    const nueva = {
+      id: nextResenaId++,
+      videojuego_id: parseInt(videojuego_id),
+      autor, comentario, puntuacion,
+      fecha: fecha || new Date().toISOString().split('T')[0]
+    };
+    resenas.push(nueva);
+    res.status(201).json({ mensaje: 'Reseña creada correctamente.', resena: nueva });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+
+
+
 
 
 

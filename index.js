@@ -99,5 +99,19 @@ app.put('/videojuegos/:id', (req, res) => {
 });
 
 
+app.delete('/videojuegos/:id', (req, res) => {
+  try {
+    const index = videojuegos.findIndex(v => v.id === parseInt(req.params.id));
+    if (index === -1) {
+      return res.status(404).json({ error: `Videojuego con id ${req.params.id} no encontrado.` });
+    }
+    const eliminado = videojuegos.splice(index, 1)[0];
+    res.json({ mensaje: 'Videojuego eliminado correctamente.', videojuego: eliminado });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+
 
 

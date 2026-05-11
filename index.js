@@ -61,3 +61,26 @@ app.get('/videojuegos/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor de videojuegos escuchando en http://localhost:${PORT}`);
 });
+
+
+app.post('/videojuegos', (req, res) => {
+  try {
+    const { titulo, genero, plataforma, precio, descripcion, desarrollador } = req.body;
+    if (!titulo || !genero || !plataforma || precio === undefined || !descripcion || !desarrollador) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios: titulo, genero, plataforma, precio, descripcion, desarrollador.' });
+    }
+    const nuevo = {
+      id: nextVideojuegoId++,
+      titulo, genero, plataforma, precio, descripcion,
+      disponible: req.body.disponible ?? true,
+      puntuacion: req.body.puntuacion ?? 0,
+      anio: req.body.anio ?? new Date().getFullYear(),
+      desarrollador
+    };
+    videojuegos.push(nuevo);
+    res.status(201).json({ mensaje: 'Videojuego creado correctamente.', videojuego: nuevo });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+

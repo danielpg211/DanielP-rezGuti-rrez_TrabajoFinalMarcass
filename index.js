@@ -1,8 +1,23 @@
+
+
+
+//"Importo Express, creo la aplicación 'app' y elijo el puerto 3000.
+
+
 const express = require('express');
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+
+//"Guardo los datos en dos arrays.
+//Uso let necesito modificar los arrays (agregar, eliminar).
+//Cada videojuego tiene 10 campos: id, título, género, plataforma, precio, descripción, disponible, puntuación, año, desarrollador.
+//Cada reseña tiene 6 campos: id, videojuego_id (relación), autor, comentario, puntuación, fecha.
+
+
+
 
 let videojuegos = [
   { id: 1,  titulo: 'Rocket League',             genero: 'deportes',  plataforma: 'PC',              precio: 0.00,  descripcion: 'Futbol con coches a alta velocidad, gratuito desde 2020.',      disponible: true,  puntuacion: 8.9, anio: 2015, desarrollador: 'Psyonix'            },
@@ -36,6 +51,14 @@ let resenas = [
 let idSiguienteVideojuego = 12; 
 
 let idSiguienteResena = 11;
+
+
+
+
+//Filtro de texto: convierto a minúsculas y uso indexOf para buscar una parte del título (búsqueda parcial).
+//Filtro numérico: precio_min y precio_max me permiten acotar un rango de precios.
+//Filtro múltiple: puedo combinar género y plataforma; ambos filtros usan comparación exacta.
+
 
 app.get('/videojuegos', function (req, res) {
   try {

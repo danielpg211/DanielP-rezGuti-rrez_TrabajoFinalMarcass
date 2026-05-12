@@ -128,68 +128,36 @@ app.get('/videojuegos/titulo/:titulo', function (req, res) {
 });
 
 
-app.put('/videojuegos/:id', (req, res) => {
+app.post('/videojuegos', function (req, res) {
   try {
-    const videojuego = videojuegos.find(v => v.id === parseInt(req.params.id));
-    if (!videojuego) {
-      return res.status(404).json({ error: `Videojuego con id ${req.params.id} no encontrado.` });
-    }
-    const campos = ['titulo', 'genero', 'plataforma', 'precio', 'descripcion', 'disponible', 'puntuacion', 'anio', 'desarrollador'];
-    campos.forEach(campo => {
-      if (req.body[campo] !== undefined) videojuego[campo] = req.body[campo];
-    });
-    res.json({ mensaje: 'Videojuego actualizado correctamente.', videojuego });
-  } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
-  }
-});
+    let titulo = req.body.titulo;
+    let genero = req.body.genero;
+    let plataforma = req.body.plataforma;
+    let precio = req.body.precio;
+    let descripcion = req.body.descripcion;
+    let desarrollador = req.body.desarrollador;
 
-
-app.delete('/videojuegos/:id', (req, res) => {
-  try {
-    const index = videojuegos.findIndex(v => v.id === parseInt(req.params.id));
-    if (index === -1) {
-      return res.status(404).json({ error: `Videojuego con id ${req.params.id} no encontrado.` });
+    if (!titulo || !genero || !plataforma || precio === undefined || !descripcion || !desarrollador) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios.' });
     }
-    const eliminado = videojuegos.splice(index, 1)[0];
-    res.json({ mensaje: 'Videojuego eliminado correctamente.', videojuego: eliminado });
-  } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
-  }
-});
 
-app.get('/resenas', (req, res) => {
-  try {
-    let resultado = [...resenas];
-    if (req.query.videojuego_id) {
-      const vid = parseInt(req.query.videojuego_id);
-      resultado = resultado.filter(r => r.videojuego_id === vid);
-    }
-    res.json({ total: resultado.length, resenas: resultado });
-  } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
-  }
-});
-
-
-app.post('/resenas', (req, res) => {
-  try {
-    const { videojuego_id, autor, comentario, puntuacion, fecha } = req.body;
-    if (!videojuego_id || !autor || !comentario || puntuacion === undefined) {
-      return res.status(400).json({ error: 'Faltan campos: videojuego_id, autor, comentario, puntuacion.' });
-    }
-    const juego = videojuegos.find(v => v.id === parseInt(videojuego_id));
-    if (!juego) {
-      return res.status(404).json({ error: `No existe videojuego con id ${videojuego_id}.` });
-    }
-    const nueva = {
-      id: nextResenaId++,
-      videojuego_id: parseInt(videojuego_id),
-      autor, comentario, puntuacion,
-      fecha: fecha || new Date().toISOString().split('T')[0]
+    let nuevo = {
+      id: idSiguienteVideojuego,
+      titulo: titulo,
+      genero: genero,
+      plataforma: plataforma,
+      precio: precio,
+      descripcion: descripcion,
+      desarrollador: desarrollador,
+      disponible: req.body.disponible !== undefined ? req.body.disponible : true,
+      puntuacion: req.body.puntuacion !== undefined ? req.body.puntuacion : 0,
+      anio: req.body.anio !== undefined ? req.body.anio : new Date().getFullYear()
     };
-    resenas.push(nueva);
-    res.status(201).json({ mensaje: 'Reseña creada correctamente.', resena: nueva });
+
+    idSiguienteVideojuego = idSiguienteVideojuego + 1;
+    videojuegos.push(nuevo);
+
+    res.status(201).json({ mensaje: 'Creado correctamente.', videojuego: nuevo });
   } catch (error) {
     res.status(500).json({ error: 'Error interno del servidor.' });
   }

@@ -165,6 +165,52 @@ app.post('/videojuegos', function (req, res) {
 
 
 
+app.put('/videojuegos/:id', function (req, res) {
+  try {
+    let id = parseInt(req.params.id);
+    let juego = videojuegos.find(function(v) { return v.id === id; });
+    if (!juego) {
+      return res.status(404).json({ error: 'Videojuego no encontrado.' });
+    }
+
+    if (req.body.titulo !== undefined)        juego.titulo = req.body.titulo;
+    if (req.body.genero !== undefined)        juego.genero = req.body.genero;
+    if (req.body.plataforma !== undefined)    juego.plataforma = req.body.plataforma;
+    if (req.body.precio !== undefined)        juego.precio = req.body.precio;
+    if (req.body.descripcion !== undefined)   juego.descripcion = req.body.descripcion;
+    if (req.body.disponible !== undefined)    juego.disponible = req.body.disponible;
+    if (req.body.puntuacion !== undefined)    juego.puntuacion = req.body.puntuacion;
+    if (req.body.anio !== undefined)          juego.anio = req.body.anio;
+    if (req.body.desarrollador !== undefined) juego.desarrollador = req.body.desarrollador;
+
+    res.status(200).json({ mensaje: 'Actualizado correctamente.', videojuego: juego });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+
+
+app.delete('/videojuegos/:id', function (req, res) {
+  try {
+    let id = parseInt(req.params.id);
+    let indice = videojuegos.findIndex(function(v) { return v.id === id; });
+    if (indice === -1) {
+      return res.status(404).json({ error: 'Videojuego no encontrado.' });
+    }
+    let eliminado = videojuegos.splice(indice, 1)[0];
+    res.status(200).json({ mensaje: 'Eliminado correctamente.', videojuego: eliminado });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+});
+
+
+
+
+
+
+
 
 
 

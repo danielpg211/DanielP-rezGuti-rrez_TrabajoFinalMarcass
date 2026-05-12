@@ -18,7 +18,7 @@ let videojuegos = [
   { id: 11, titulo: 'Lethal Company',            genero: 'terror',    plataforma: 'PC',              precio: 9.99,  descripcion: 'Recolecta chatarra espacial con amigos sin morir en el intento.', disponible: true, puntuacion: 9.1, anio: 2023, desarrollador: 'Zeekerss'           },
 ];
 
-let nextVideojuegoId = 12;
+
 
 let resenas = [
   { id: 1,  videojuego_id: 1,  autor: 'LaCabra',   comentario: 'El mejor juego de coches que he probado, muy adictivo.',         puntuacion: 9, fecha: '2024-01-10' },
@@ -33,15 +33,69 @@ let resenas = [
   { id: 10, videojuego_id: 11, autor: 'Javi S.',    comentario: 'Terrorífico y divertidisimo con amigos, muy recomendable.',       puntuacion: 9, fecha: '2024-06-01' },
 ];
 
-let nextResenaId = 11;
+let idSiguienteVideojuego = 12; 
 
-app.get('/videojuegos', (req, res) => {
+let idSiguienteResena = 11;
+
+app.get('/videojuegos', function (req, res) {
   try {
-    res.json({ total: videojuegos.length, videojuegos });
+    let resultado = videojuegos.slice();
+
+    if (req.query.titulo) {
+      let titulo = req.query.titulo.toLowerCase();
+      resultado = resultado.filter(function(v) {
+        return v.titulo.toLowerCase().indexOf(titulo) !== -1;
+      });
+    }
+
+    if (req.query.precio_min) {
+      let min = parseFloat(req.query.precio_min);
+      resultado = resultado.filter(function(v) { return v.precio >= min; });
+    }
+    if (req.query.precio_max) {
+      let max = parseFloat(req.query.precio_max);
+      resultado = resultado.filter(function(v) { return v.precio <= max; });
+    }
+
+    
+    if (req.query.genero) {
+      let genero = req.query.genero.toLowerCase();
+      resultado = resultado.filter(function(v) {
+        return v.genero.toLowerCase() === genero;
+      });
+    }
+    if (req.query.plataforma) {
+      let plataforma = req.query.plataforma.toLowerCase();
+      resultado = resultado.filter(function(v) {
+        return v.plataforma.toLowerCase() === plataforma;
+      });
+    }
+
+    
+    if (req.query.orden) {
+      let campo = req.query.orden;
+      let direccion = req.query.direccion || 'asc';
+      
+      if (campo === 'precio' || campo === 'puntuacion' || campo === 'anio' || campo === 'titulo') {
+        resultado.sort(function(a, b) {
+          if (typeof a[campo] === 'string') {
+            if (direccion === 'desc') return b[campo].localeCompare(a[campo]);
+            else return a[campo].localeCompare(b[campo]);
+          } else {
+            if (direccion === 'desc') return b[campo] - a[campo];
+            else return a[campo] - b[campo];
+          }
+        });
+      }
+    }
+
+    res.status(200).json({ total: resultado.length, videojuegos: resultado });
   } catch (error) {
     res.status(500).json({ error: 'Error interno del servidor.' });
   }
 });
+   
+    
 
 
 app.get('/videojuegos/:id', (req, res) => {

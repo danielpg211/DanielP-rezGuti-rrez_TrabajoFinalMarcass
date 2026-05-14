@@ -11,10 +11,7 @@ const PORT = 3000;
 app.use(express.json());
 
 
-//"Guardo los datos en dos arrays.
-//Uso let necesito modificar los arrays (agregar, eliminar).
-//Cada videojuego tiene 10 campos: id, título, género, plataforma, precio, descripción, disponible, puntuación, año, desarrollador.
-//Cada reseña tiene 6 campos: id, videojuego_id (relación), autor, comentario, puntuación, fecha.
+
 
 
 
@@ -55,58 +52,56 @@ let idSiguienteResena = 11;
 
 
 
-//Filtro de texto: convierto a minúsculas y uso indexOf para buscar una parte del título (búsqueda parcial).
-//Filtro numérico: precio_min y precio_max me permiten acotar un rango de precios.
-//Filtro múltiple: puedo combinar género y plataforma; ambos filtros usan comparación exacta.
 
 
-app.get('/videojuegos', function (req, res) {
+app.get('/videojuegos', (req, res) => {
   try {
-    let resultado = videojuegos.slice();
-
-    if (req.query.titulo) {
-      let titulo = req.query.titulo.toLowerCase();
-      resultado = resultado.filter(function(v) {
-        return v.titulo.toLowerCase().indexOf(titulo) !== -1;
-      });
-    }
-
-    if (req.query.precio_min) {
-      let min = parseFloat(req.query.precio_min);
-      resultado = resultado.filter(function(v) { return v.precio >= min; });
-    }
-    if (req.query.precio_max) {
-      let max = parseFloat(req.query.precio_max);
-      resultado = resultado.filter(function(v) { return v.precio <= max; });
-    }
+    let resultado = [...videojuegos];
 
     
-    if (req.query.genero) {
-      let genero = req.query.genero.toLowerCase();
-      resultado = resultado.filter(function(v) {
-        return v.genero.toLowerCase() === genero;
-      });
+    if (req.query.titulo) {
+      const titulo = req.query.titulo.toLowerCase();
+      resultado = resultado.filter(v => v.titulo.toLowerCase().includes(titulo));
     }
+    
+    if (req.query.precio_min) {
+      const min = parseFloat(req.query.precio_min);
+      resultado = resultado.filter(v => v.precio >= min);
+    }
+    
+    if (req.query.precio_max) {
+      const max = parseFloat(req.query.precio_max);
+      resultado = resultado.filter(v => v.precio <= max);
+    }
+    
+    if (req.query.genero) {
+      const genero = req.query.genero.toLowerCase();
+      resultado = resultado.filter(v => v.genero.toLowerCase() === genero);
+    }
+    
     if (req.query.plataforma) {
-      let plataforma = req.query.plataforma.toLowerCase();
-      resultado = resultado.filter(function(v) {
-        return v.plataforma.toLowerCase() === plataforma;
-      });
+      const plataforma = req.query.plataforma.toLowerCase();
+      resultado = resultado.filter(v => v.plataforma.toLowerCase() === plataforma);
+    }
+    
+    if (req.query.disponible) {
+      const disponible = req.query.disponible === 'true';
+      resultado = resultado.filter(v => v.disponible === disponible);
     }
 
     
     if (req.query.orden) {
-      let campo = req.query.orden;
-      let direccion = req.query.direccion || 'asc';
-      
-      if (campo === 'precio' || campo === 'puntuacion' || campo === 'anio' || campo === 'titulo') {
-        resultado.sort(function(a, b) {
-          if (typeof a[campo] === 'string') {
-            if (direccion === 'desc') return b[campo].localeCompare(a[campo]);
-            else return a[campo].localeCompare(b[campo]);
+      const campo = req.query.orden;
+      const direccion = req.query.direccion === 'desc' ? -1 : 1;
+      const camposPermitidos = ['precio', 'puntuacion', 'anio', 'titulo'];
+      if (camposPermitidos.includes(campo)) {
+        resultado.sort((a, b) => {
+          let valA = a[campo];
+          let valB = b[campo];
+          if (typeof valA === 'string') {
+            return direccion * valA.localeCompare(valB);
           } else {
-            if (direccion === 'desc') return b[campo] - a[campo];
-            else return a[campo] - b[campo];
+            return direccion * (valA - valB);
           }
         });
       }
@@ -114,10 +109,9 @@ app.get('/videojuegos', function (req, res) {
 
     res.status(200).json({ total: resultado.length, videojuegos: resultado });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-   
     
 
 

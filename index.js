@@ -238,22 +238,20 @@ app.post("/resenas", (req, res) => {
 });
 
 
-
-
-
-app.delete('/resenas/:id', function (req, res) {
+app.delete("/resenas/:id", (req, res) => {
   try {
-    let id = parseInt(req.params.id);
-    let indice = resenas.findIndex(function(r) { return r.id === id; });
-    if (indice === -1) {
-      return res.status(404).json({ error: 'Reseña no encontrada.' });
-    }
-    let eliminada = resenas.splice(indice, 1)[0];
-    res.status(200).json({ mensaje: 'Reseña eliminada correctamente.', resena: eliminada });
+    const id = parseInt(req.params.id);
+    const index = resenas.findIndex(r => r.id === id);
+    if (index === -1) return res.status(404).json({ error: "Reseña no encontrada" });
+    const eliminada = resenas.splice(index, 1)[0];
+    res.status(200).json({ mensaje: "Reseña eliminada", resena: eliminada });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+
+
 
 
 app.listen(PORT, function () {

@@ -283,6 +283,32 @@ app.get("/stats", (req, res) => {
 });
 
 
+app.get("/top", (req, res) => {
+  try {
+    const campo = req.query.campo;
+    const limite = parseInt(req.query.limite) || 5;
+    const orden = req.query.orden || 'desc'; 
+    if (!campo) {
+      return res.status(400).json({ error: "Debe indicar campo" });
+    }
+    if (!['precio', 'puntuacion', 'anio'].includes(campo)) {
+      return res.status(400).json({ error: "Campo debe ser precio, puntuacion o año" });
+    }
+    let copia = [...videojuegos];
+    copia.sort((a, b) => {
+      if (orden === 'desc') return b[campo] - a[campo];
+      else return a[campo] - b[campo];
+    });
+    const top = copia.slice(0, limite);
+    res.status(200).json({ campo, orden, limite, top });
+  } catch (error) {
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+
+
 
 
 

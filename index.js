@@ -113,20 +113,17 @@ app.get('/videojuegos', (req, res) => {
   }
 });
     
-
-
-app.get('/videojuegos/:id', function (req, res) {
+app.get("/videojuegos/:id", (req, res) => {
   try {
-    let id = parseInt(req.params.id);
-    let juego = videojuegos.find(function(v) { return v.id === id; });
-    if (!juego) {
-      return res.status(404).json({ error: 'Videojuego no encontrado.' });
-    }
+    const id = parseInt(req.params.id);
+    const juego = videojuegos.find(v => v.id === id);
+    if (!juego) return res.status(404).json({ error: "Videojuego no encontrado" });
     res.status(200).json(juego);
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 app.get('/videojuegos/titulo/:titulo', function (req, res) {

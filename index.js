@@ -197,72 +197,46 @@ app.delete("/videojuegos/:id", (req, res) => {
 });
 
 
-
-app.get('/resenas', function (req, res) {
+app.get("/resenas", (req, res) => {
   try {
-    let resultado = resenas.slice();
-
+    let resultado = [...resenas];
     if (req.query.videojuego_id) {
-      let id = parseInt(req.query.videojuego_id);
-      resultado = resultado.filter(function(r) { return r.videojuego_id === id; });
+      const id = parseInt(req.query.videojuego_id);
+      resultado = resultado.filter(r => r.videojuego_id === id);
     }
-
     res.status(200).json({ total: resultado.length, resenas: resultado });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
 
-
-app.post('/resenas', function (req, res) {
+app.post("/resenas", (req, res) => {
   try {
-    let videojuego_id = req.body.videojuego_id;
-    let autor = req.body.autor;
-    let comentario = req.body.comentario;
-    let puntuacion = req.body.puntuacion;
-    let fecha = req.body.fecha;
-
+    const { videojuego_id, autor, comentario, puntuacion, fecha } = req.body;
     if (!videojuego_id || !autor || !comentario || puntuacion === undefined) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios.' });
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
-
-    let juego = videojuegos.find(function(v) { return v.id === parseInt(videojuego_id); });
-    if (!juego) {
-      return res.status(404).json({ error: 'El videojuego no existe.' });
+    const juegoExiste = videojuegos.some(v => v.id === parseInt(videojuego_id));
+    if (!juegoExiste) {
+      return res.status(404).json({ error: "El videojuego no existe" });
     }
-
-    
-    let fechaResena;
-    if (fecha) {
-      fechaResena = fecha;
-    } else {
-      let hoy = new Date();
-      let anio = hoy.getFullYear();
-      let mes = hoy.getMonth() + 1;
-      let dia = hoy.getDate();
-      if (mes < 10) mes = '0' + mes;
-      if (dia < 10) dia = '0' + dia;
-      fechaResena = anio + '-' + mes + '-' + dia;
-    }
-
-    let nuevaResena = {
-      id: idSiguienteResena,
+    const fechaResena = fecha || new Date().toISOString().split('T')[0];
+    const nuevaResena = {
+      id: idSiguienteResena++,
       videojuego_id: parseInt(videojuego_id),
-      autor: autor,
-      comentario: comentario,
-      puntuacion: puntuacion,
+      autor,
+      comentario,
+      puntuacion,
       fecha: fechaResena
     };
-
-    idSiguienteResena = idSiguienteResena + 1;
     resenas.push(nuevaResena);
-
-    res.status(201).json({ mensaje: 'Reseña creada correctamente.', resena: nuevaResena });
+    res.status(201).json({ mensaje: "Reseña creada", resena: nuevaResena });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 

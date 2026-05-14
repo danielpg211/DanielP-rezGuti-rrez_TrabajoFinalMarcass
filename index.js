@@ -125,21 +125,17 @@ app.get("/videojuegos/:id", (req, res) => {
 });
 
 
-
-app.get('/videojuegos/titulo/:titulo', function (req, res) {
+app.get("/videojuegos/titulo/:titulo", (req, res) => {
   try {
-    let tituloBuscar = req.params.titulo.toLowerCase();
-    let juego = videojuegos.find(function(v) {
-      return v.titulo.toLowerCase() === tituloBuscar;
-    });
-    if (!juego) {
-      return res.status(404).json({ error: 'No encontrado por título.' });
-    }
+    const tituloBuscar = req.params.titulo.toLowerCase();
+    const juego = videojuegos.find(v => v.titulo.toLowerCase() === tituloBuscar);
+    if (!juego) return res.status(404).json({ error: "Videojuego no encontrado por título" });
     res.status(200).json(juego);
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 app.post('/videojuegos', function (req, res) {

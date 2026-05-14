@@ -184,17 +184,15 @@ app.put("/videojuegos/:id", (req, res) => {
 });
 
 
-app.delete('/videojuegos/:id', function (req, res) {
+app.delete("/videojuegos/:id", (req, res) => {
   try {
-    let id = parseInt(req.params.id);
-    let indice = videojuegos.findIndex(function(v) { return v.id === id; });
-    if (indice === -1) {
-      return res.status(404).json({ error: 'Videojuego no encontrado.' });
-    }
-    let eliminado = videojuegos.splice(indice, 1)[0];
-    res.status(200).json({ mensaje: 'Eliminado correctamente.', videojuego: eliminado });
+    const id = parseInt(req.params.id);
+    const index = videojuegos.findIndex(v => v.id === id);
+    if (index === -1) return res.status(404).json({ error: "Videojuego no encontrado" });
+    const eliminado = videojuegos.splice(index, 1)[0];
+    res.status(200).json({ mensaje: "Videojuego eliminado", videojuego: eliminado });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 

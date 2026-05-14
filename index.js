@@ -251,6 +251,42 @@ app.delete("/resenas/:id", (req, res) => {
 });
 
 
+app.get("/stats", (req, res) => {
+  try {
+    const campo = req.query.campo;
+    const operacion = req.query.operacion; 
+    if (!campo || !operacion) {
+      return res.status(400).json({ error: "Debe indicar campo operacion " });
+    }
+    if (!['precio', 'puntuacion', 'anio'].includes(campo)) {
+      return res.status(400).json({ error: "Campo debe ser precio, puntuacion o año" });
+    }
+    const valores = videojuegos.map(v => v[campo]).filter(v => typeof v === 'number');
+    if (valores.length === 0) {
+      return res.status(404).json({ error: "No hay datos numéricos" });
+    }
+    let resultado;
+    if (operacion === 'media') {
+      const suma = valores.reduce((acc, val) => acc + val, 0);
+      resultado = suma / valores.length;
+    } else if (operacion === 'max') {
+      resultado = Math.max(...valores);
+    } else if (operacion === 'min') {
+      resultado = Math.min(...valores);
+    } else {
+      return res.status(400).json({ error: "Operación debe ser media max o min" });
+    }
+    res.status(200).json({ campo, operacion, resultado });
+  } catch (error) {
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+
+
+
+
 
 
 

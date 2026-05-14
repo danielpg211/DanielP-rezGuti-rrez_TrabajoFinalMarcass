@@ -138,41 +138,31 @@ app.get("/videojuegos/titulo/:titulo", (req, res) => {
 
 
 
-app.post('/videojuegos', function (req, res) {
+app.post("/videojuegos", (req, res) => {
   try {
-    let titulo = req.body.titulo;
-    let genero = req.body.genero;
-    let plataforma = req.body.plataforma;
-    let precio = req.body.precio;
-    let descripcion = req.body.descripcion;
-    let desarrollador = req.body.desarrollador;
-
+    const { titulo, genero, plataforma, precio, descripcion, desarrollador } = req.body;
     if (!titulo || !genero || !plataforma || precio === undefined || !descripcion || !desarrollador) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios.' });
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
-    let nuevo = {
-      id: idSiguienteVideojuego,
-      titulo: titulo,
-      genero: genero,
-      plataforma: plataforma,
-      precio: precio,
-      descripcion: descripcion,
-      desarrollador: desarrollador,
-      disponible: req.body.disponible !== undefined ? req.body.disponible : true,
-      puntuacion: req.body.puntuacion !== undefined ? req.body.puntuacion : 0,
-      anio: req.body.anio !== undefined ? req.body.anio : new Date().getFullYear()
+    const nuevo = {
+      id: idSiguienteVideojuego++,
+      titulo,
+      genero,
+      plataforma,
+      precio,
+      descripcion,
+      desarrollador,
+      disponible: req.body.disponible ?? true,
+      puntuacion: req.body.puntuacion ?? 0,
+      anio: req.body.anio ?? new Date().getFullYear()
     };
-
-    idSiguienteVideojuego = idSiguienteVideojuego + 1;
     videojuegos.push(nuevo);
-
-    res.status(201).json({ mensaje: 'Creado correctamente.', videojuego: nuevo });
+    res.status(201).json({ mensaje: "Videojuego creado correctamente", videojuego: nuevo });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
-});
-
+}); 
 
 
 app.put('/videojuegos/:id', function (req, res) {

@@ -307,18 +307,22 @@ app.get("/top", (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-app.listen(PORT, function () {
-  console.log('Servidor en http://localhost:' + PORT);
+app.get("/totales", (req, res) => {
+  try {
+    res.status(200).json({
+      totalVideojuegos: videojuegos.length,
+      totalResenas: resenas.length
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
+
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+
 
 
 

@@ -93,7 +93,8 @@ app.get('/videojuegos', (req, res) => {
       resultado = resultado.filter(v => v.disponible === disponible);
     }
 
-    
+    // Aqui se ordena por ejeplo el precio de forma ascendente o descendente segun se indique en la query, si no se indica se ordena de forma ascendente por titulo.
+
     if (req.query.orden) {
       const campo = req.query.orden;
       const direccion = req.query.direccion === 'desc' ? -1 : 1;
@@ -119,8 +120,8 @@ app.get('/videojuegos', (req, res) => {
     
 app.get("/videojuegos/:id", (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    const juego = videojuegos.find(v => v.id === id);
+    const id = parseInt(req.params.id); // Aqui llega como un String y se convierte a un número entero.
+    const juego = videojuegos.find(v => v.id === id); //Aqui find recorre el array y  devuelve el primer elemento correcto.
     if (!juego) return res.status(404).json({ error: "Videojuego no encontrado" });
     res.status(200).json(juego);
   } catch (error) {
@@ -131,7 +132,7 @@ app.get("/videojuegos/:id", (req, res) => {
 
 app.get("/videojuegos/titulo/:titulo", (req, res) => {
   try {
-    const tituloBuscar = req.params.titulo.toLowerCase();
+    const tituloBuscar = req.params.titulo.toLowerCase(); 
     const juego = videojuegos.find(v => v.titulo.toLowerCase() === tituloBuscar);
     if (!juego) return res.status(404).json({ error: "Videojuego no encontrado por título" });
     res.status(200).json(juego);
@@ -144,10 +145,14 @@ app.get("/videojuegos/titulo/:titulo", (req, res) => {
 
 app.post("/videojuegos", (req, res) => {
   try {
-    const { titulo, genero, plataforma, precio, descripcion, desarrollador } = req.body;
+    const { titulo, genero, plataforma, precio, descripcion, desarrollador } = req.body; //Aqui cojemos todas las propiedades del objeto req.body
+    //Y creamos variables con el mismo nombre 
+    //Lo de undefined es necesario porque el precio puede ser 0 y no queremos que se considere como un valor faltante, lo mismo con la puntuacion que puede ser 0.
     if (!titulo || !genero || !plataforma || precio === undefined || !descripcion || !desarrollador) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
+
+    
 
     const nuevo = {
       id: idSiguienteVideojuego++,

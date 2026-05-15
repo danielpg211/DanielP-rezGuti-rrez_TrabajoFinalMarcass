@@ -11,3 +11,9 @@ Cada reseña contiene 6 campos ID, ID del videojuego al que pertenece, autor, co
 - Node.js – JavaScript.
 - Express.js – Framework web para construir la API REST.
 - Bruno – Herramienta para probar y documentar la API.
+
+## Instalación y ejecución
+
+npm init -y
+npm install express
+node index.js

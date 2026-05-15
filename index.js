@@ -45,6 +45,9 @@ let resenas = [
   { id: 10, videojuego_id: 11, autor: 'Javi S.',    comentario: 'Terrorífico y divertidisimo con amigos, muy recomendable.',       puntuacion: 9, fecha: '2024-06-01' },
 ];
 
+
+//Este para el siguiente id de videojuego o reseña que se cree
+
 let idSiguienteVideojuego = 12; 
 
 let idSiguienteResena = 11;
@@ -56,16 +59,17 @@ let idSiguienteResena = 11;
 
 app.get('/videojuegos', (req, res) => {
   try {
+    // Creamos una copia del array original para no modificarlo
     let resultado = [...videojuegos];
 
     
     if (req.query.titulo) {
-      const titulo = req.query.titulo.toLowerCase();
+      const titulo = req.query.titulo.toLowerCase(); // Ponemos las minusculas.
       resultado = resultado.filter(v => v.titulo.toLowerCase().includes(titulo));
     }
     
     if (req.query.precio_min) {
-      const min = parseFloat(req.query.precio_min);
+      const min = parseFloat(req.query.precio_min); //Aqui se convierte un String a numero.
       resultado = resultado.filter(v => v.precio >= min);
     }
     
@@ -85,7 +89,7 @@ app.get('/videojuegos', (req, res) => {
     }
     
     if (req.query.disponible) {
-      const disponible = req.query.disponible === 'true';
+      const disponible = req.query.disponible === 'true'; //Convertimos el String en un booleano true y cualquier otro valor a false.
       resultado = resultado.filter(v => v.disponible === disponible);
     }
 

@@ -1,0 +1,270 @@
+opencollection: 1.0.0
+info:
+  name: VideojuegosAPI
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ''
+      port: ''
+      auth:
+        username: ''
+        password: ''
+      bypassProxy: ''
+items:
+  - info:
+      name: DELETE Eliminar reseña
+      type: http
+      seq: 10
+    http:
+      method: DELETE
+      url: http://localhost:3000/resenas/11
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: 'DELETE Eliminar '
+      type: http
+      seq: 6
+    http:
+      method: DELETE
+      url: http://localhost:3000/videojuegos/12
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Get de los 3 mejores puntuados
+      type: http
+      seq: 12
+    http:
+      method: GET
+      url: http://localhost:3000/top?campo=puntuacion&limite=3&orden=desc
+      params:
+        - name: campo
+          value: puntuacion
+          type: query
+        - name: limite
+          value: '3'
+          type: query
+        - name: orden
+          value: desc
+          type: query
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: GET DE TODOS
+      type: http
+      seq: 2
+    http:
+      method: GET
+      url: http://localhost:3000/videojuegos
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Get Los totales
+      type: http
+      seq: 13
+    http:
+      method: GET
+      url: http://localhost:3000/totales
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: 'GET POR ID '
+      type: http
+      seq: 2
+    http:
+      method: GET
+      url: http://localhost:3000/videojuegos/4
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: GET POR TITULO
+      type: http
+      seq: 3
+    http:
+      method: GET
+      url: http://localhost:3000/videojuegos/titulo/Elden%20Ring
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: 'Get reseña del juego '
+      type: http
+      seq: 8
+    http:
+      method: GET
+      url: http://localhost:3000/resenas?videojuego_id=1
+      params:
+        - name: videojuego_id
+          value: '1'
+          type: query
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: 'GET stats media del precio '
+      type: http
+      seq: 11
+    http:
+      method: GET
+      url: http://localhost:3000/stats?campo=precio&operacion=media
+      params:
+        - name: campo
+          value: precio
+          type: query
+        - name: operacion
+          value: media
+          type: query
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: GET todas reseñas
+      type: http
+      seq: 7
+    http:
+      method: GET
+      url: http://localhost:3000/resenas
+      body:
+        type: json
+        data: '  '
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: POST crear reseña
+      type: http
+      seq: 9
+    http:
+      method: POST
+      url: http://localhost:3000/resenas
+      body:
+        type: json
+        data: |-
+          {
+            "videojuego_id": 4,
+            "autor": "Lara",
+            "comentario": "God of War Ragnarok es una obra maestra",
+            "puntuacion": 10
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: POST crear
+      type: http
+      seq: 4
+    http:
+      method: POST
+      url: http://localhost:3000/videojuegos
+      body:
+        type: json
+        data: |2-
+            {
+            "titulo": "Stray",
+            "genero": "aventura",
+            "plataforma": "PS5",
+            "precio": 39.99,
+            "descripcion": "Un gato perdido en una ciudad cyberpunk",
+            "desarrollador": "BlueTwelve Studio"
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: PUT actualizar
+      type: http
+      seq: 5
+    http:
+      method: PUT
+      url: http://localhost:3000/videojuegos/12
+      body:
+        type: json
+        data: |-
+          {
+            "precio": 29.99,
+            "puntuacion": 9.2
+          }
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-05-15T22:25:16.298Z'
+    exportedUsing: Bruno

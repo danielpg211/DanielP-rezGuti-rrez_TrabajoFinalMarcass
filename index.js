@@ -58,45 +58,53 @@ let idSiguienteResena = 11;
 
 
 app.get('/videojuegos', (req, res) => {
+  // Usamos try/catch para capturar errores inesperados y no romper el servidor.
   try {
     // Creamos una copia del array original para no modificarlo
     let resultado = [...videojuegos];
 
     
+    //Filtro por el titulo
     if (req.query.titulo) {
       const titulo = req.query.titulo.toLowerCase(); // Ponemos las minusculas.
       resultado = resultado.filter(v => v.titulo.toLowerCase().includes(titulo));
     }
-    
+
+    //Filtro por el precio minimo 
     if (req.query.precio_min) {
       const min = parseFloat(req.query.precio_min); //Aqui se convierte un String a numero.
       resultado = resultado.filter(v => v.precio >= min);
     }
     
+    //Filtro por el precio maximo 
     if (req.query.precio_max) {
       const max = parseFloat(req.query.precio_max);
       resultado = resultado.filter(v => v.precio <= max);
     }
     
+    //Filtro por el genero
     if (req.query.genero) {
       const genero = req.query.genero.toLowerCase();
       resultado = resultado.filter(v => v.genero.toLowerCase() === genero);
     }
     
+    //Fitro por la plataforma
     if (req.query.plataforma) {
       const plataforma = req.query.plataforma.toLowerCase();
       resultado = resultado.filter(v => v.plataforma.toLowerCase() === plataforma);
     }
     
+    //Filtro si esta disponibleo no.
     if (req.query.disponible) {
       const disponible = req.query.disponible === 'true'; //Convertimos el String en un booleano true y cualquier otro valor a false.
       resultado = resultado.filter(v => v.disponible === disponible);
     }
 
     // Aqui se ordena por ejeplo el precio de forma ascendente o descendente segun se indique en la query, si no se indica se ordena de forma ascendente por titulo.
-
+    //Filtro de ordenar segun un campo y una direccion.
     if (req.query.orden) {
       const campo = req.query.orden;
+      // Si se indica 'desc' se ordena de forma descendente, si no se indica o se indica otro valor se ordena de forma ascendente.
       const direccion = req.query.direccion === 'desc' ? -1 : 1;
       const camposPermitidos = ['precio', 'puntuacion', 'anio', 'titulo'];
       if (camposPermitidos.includes(campo)) {
@@ -111,13 +119,17 @@ app.get('/videojuegos', (req, res) => {
         });
       }
     }
+    //Codigo 200 = que todo ha ido bien
 
     res.status(200).json({ total: resultado.length, videojuegos: resultado });
   } catch (error) {
+    //Codigo 500 = error del servidor
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
     
+//Obtiene un videojuego por su id.
+
 app.get("/videojuegos/:id", (req, res) => {
   try {
     const id = parseInt(req.params.id); // Aqui llega como un String y se convierte a un número entero.
@@ -129,11 +141,13 @@ app.get("/videojuegos/:id", (req, res) => {
   }
 });
 
+//Flitro busqueda con el titulo igual 
 
 app.get("/videojuegos/titulo/:titulo", (req, res) => {
   try {
     const tituloBuscar = req.params.titulo.toLowerCase(); 
     const juego = videojuegos.find(v => v.titulo.toLowerCase() === tituloBuscar);
+    //Error 404 no se econtró el videojuego con ese título.
     if (!juego) return res.status(404).json({ error: "Videojuego no encontrado por título" });
     res.status(200).json(juego);
   } catch (error) {
@@ -141,7 +155,7 @@ app.get("/videojuegos/titulo/:titulo", (req, res) => {
   }
 });
 
-
+//Crea un nuevo videojuego los datos se envian al body.
 
 app.post("/videojuegos", (req, res) => {
   try {
@@ -162,7 +176,7 @@ app.post("/videojuegos", (req, res) => {
       precio,
       descripcion,
       desarrollador,
-      disponible: req.body.disponible ?? true,
+      disponible: req.body.disponible ?? true, //los ?? sirven para asignar un valor por defecto en caso de que el valor sea null.
       puntuacion: req.body.puntuacion ?? 0,
       //Aqui devuelve el año actual 
       anio: req.body.anio ?? new Date().getFullYear()
@@ -176,6 +190,7 @@ app.post("/videojuegos", (req, res) => {
 }); 
 
 
+//Actualiza un videojuego por su id, los datos a actualizar se envian al body.
 app.put("/videojuegos/:id", (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -196,6 +211,7 @@ app.put("/videojuegos/:id", (req, res) => {
   }
 });
 
+//Elimina un videojuego por su id.
 
 app.delete("/videojuegos/:id", (req, res) => {
   try {
@@ -211,6 +227,7 @@ app.delete("/videojuegos/:id", (req, res) => {
   }
 });
 
+//El listado de las reseñas.
 
 app.get("/resenas", (req, res) => {
   try {
@@ -225,6 +242,7 @@ app.get("/resenas", (req, res) => {
   }
 });
 
+//Crea una nueva reseña, los datos se envian al body.
 
 app.post("/resenas", (req, res) => {
   try {
@@ -243,6 +261,7 @@ app.post("/resenas", (req, res) => {
     const fechaResena = fecha || new Date().toISOString().split('T')[0];
     //Aqui construimos el objeto de la nueva reseña con el id para los campos.
     const nuevaResena = {
+      //Aqui asignamos un id único a la nueva reseña.
       id: idSiguienteResena++,
       videojuego_id: parseInt(videojuego_id),
       autor,
@@ -258,6 +277,7 @@ app.post("/resenas", (req, res) => {
   }
 });
 
+//Elimina una reseña por su id.
 
 app.delete("/resenas/:id", (req, res) => {
   try {
@@ -273,6 +293,7 @@ app.delete("/resenas/:id", (req, res) => {
 });
 
 
+//Clacula la media el maximo y el minimo por ejemplo el precio de los videojuegos.
 app.get("/stats", (req, res) => {
   try {
     const campo = req.query.campo;
@@ -310,7 +331,7 @@ app.get("/stats", (req, res) => {
   }
 });
 
-
+//obtienes los juegos ordenados por el campo elegido por ejemplo el precio, la puntuacion o el año, y se puede indicar el orden ascendente o descendente y un limite de resultados a mostrar.
 app.get("/top", (req, res) => {
   try {
     const campo = req.query.campo;
@@ -336,7 +357,7 @@ app.get("/top", (req, res) => {
   }
 });
 
-
+//Obtiene el total de videojuegos y reseñas.
 app.get("/totales", (req, res) => {
   try {
     res.status(200).json({

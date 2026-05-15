@@ -152,7 +152,7 @@ app.post("/videojuegos", (req, res) => {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
-    
+    //Construimos el objeto del nuevo videojuego con el id para los campos .
 
     const nuevo = {
       id: idSiguienteVideojuego++,
@@ -164,8 +164,10 @@ app.post("/videojuegos", (req, res) => {
       desarrollador,
       disponible: req.body.disponible ?? true,
       puntuacion: req.body.puntuacion ?? 0,
+      //Aqui devuelve el año actual 
       anio: req.body.anio ?? new Date().getFullYear()
     };
+    //Aqui añadimos un nuevo objeto al array de videojuegos 
     videojuegos.push(nuevo);
     res.status(201).json({ mensaje: "Videojuego creado correctamente", videojuego: nuevo });
   } catch (error) {
@@ -179,9 +181,11 @@ app.put("/videojuegos/:id", (req, res) => {
     const id = parseInt(req.params.id);
     const juego = videojuegos.find(v => v.id === id);
     if (!juego) return res.status(404).json({ error: "Videojuego no encontrado" });
-
+    
+    //Aqui hacemos una lista de campos para que se puedan actualizar.
     const campos = ['titulo', 'genero', 'plataforma', 'precio', 'descripcion', 'disponible', 'puntuacion', 'anio', 'desarrollador'];
     for (let campo of campos) {
+      //si el campo existe en req.body actualizamos el valor del juego.
       if (req.body[campo] !== undefined) {
         juego[campo] = req.body[campo];
       }
@@ -196,9 +200,11 @@ app.put("/videojuegos/:id", (req, res) => {
 app.delete("/videojuegos/:id", (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    //Aqui findIndex recorre el array y devuelve el indice del primer elemento que cumple la condicion
+    //o devuelve -1 si no encuentra ningun elemento que cumpla la condicion.
     const index = videojuegos.findIndex(v => v.id === id);
     if (index === -1) return res.status(404).json({ error: "Videojuego no encontrado" });
-    const eliminado = videojuegos.splice(index, 1)[0];
+    const eliminado = videojuegos.splice(index, 1)[0]; //Elimina el indice y la cantidad de elementos a eliminar, en este caso 1, y devuelve un array con los elementos eliminados, por eso el 0 para obtener el primer elemento del array.
     res.status(200).json({ mensaje: "Videojuego eliminado", videojuego: eliminado });
   } catch (error) {
     res.status(500).json({ error: "Error interno del servidor" });
@@ -223,14 +229,19 @@ app.get("/resenas", (req, res) => {
 app.post("/resenas", (req, res) => {
   try {
     const { videojuego_id, autor, comentario, puntuacion, fecha } = req.body;
+    //Aqui los validamos los campos obligatorios de la reseña.
     if (!videojuego_id || !autor || !comentario || puntuacion === undefined) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
+    //Aqui verificamos si el juego existe en el array de videjuegos.
+    //some() devuelve tru si al menos un elemento cumple la condicion.
     const juegoExiste = videojuegos.some(v => v.id === parseInt(videojuego_id));
     if (!juegoExiste) {
       return res.status(404).json({ error: "El videojuego no existe" });
     }
+    //Si no se proporciona una fecha se asigna la actual en formato año mes dia.
     const fechaResena = fecha || new Date().toISOString().split('T')[0];
+    //Aqui construimos el objeto de la nueva reseña con el id para los campos.
     const nuevaResena = {
       id: idSiguienteResena++,
       videojuego_id: parseInt(videojuego_id),
@@ -239,6 +250,7 @@ app.post("/resenas", (req, res) => {
       puntuacion,
       fecha: fechaResena
     };
+    //Aqui añadimos la nueva reseña al array de reseñas.
     resenas.push(nuevaResena);
     res.status(201).json({ mensaje: "Reseña creada", resena: nuevaResena });
   } catch (error) {
@@ -252,6 +264,7 @@ app.delete("/resenas/:id", (req, res) => {
     const id = parseInt(req.params.id);
     const index = resenas.findIndex(r => r.id === id);
     if (index === -1) return res.status(404).json({ error: "Reseña no encontrada" });
+    //Aqui eliminamos la reseña del array de reseñas y devolvemos la reseña eliminada en la respuesta.
     const eliminada = resenas.splice(index, 1)[0];
     res.status(200).json({ mensaje: "Reseña eliminada", resena: eliminada });
   } catch (error) {
@@ -270,15 +283,21 @@ app.get("/stats", (req, res) => {
     if (!['precio', 'puntuacion', 'anio'].includes(campo)) {
       return res.status(400).json({ error: "Campo debe ser precio, puntuacion o año" });
     }
+    //Aqui obtenemos todos los valores del campo elegido.
+    //map() crea un nuevo array con los valores de ese campo para cada juego
+    //filter() eleimina aquellos  que no sean numero.
     const valores = videojuegos.map(v => v[campo]).filter(v => typeof v === 'number');
     if (valores.length === 0) {
       return res.status(404).json({ error: "No hay datos numéricos" });
     }
     let resultado;
+    
     if (operacion === 'media') {
+      //Aqui sumamos todos los valores del campo elegido y lo dividimos por la cantidad de valores para obtener la media.
       const suma = valores.reduce((acc, val) => acc + val, 0);
       resultado = suma / valores.length;
     } else if (operacion === 'max') {
+      //Aqui obtenemos el valor máximo del campo elegido utilizando el operador spread para pasar los valores como argumentos a Math.max.
       resultado = Math.max(...valores);
     } else if (operacion === 'min') {
       resultado = Math.min(...valores);
@@ -303,10 +322,12 @@ app.get("/top", (req, res) => {
     if (!['precio', 'puntuacion', 'anio'].includes(campo)) {
       return res.status(400).json({ error: "Campo debe ser precio, puntuacion o año" });
     }
+    //Copiamos el array de videojuegos para no modificar el original al ordenar.
     let copia = [...videojuegos];
+    //Ordenamos segun el campo elegido y el orden indicado, si no se indica se ordena de forma descendente.
     copia.sort((a, b) => {
-      if (orden === 'desc') return b[campo] - a[campo];
-      else return a[campo] - b[campo];
+      if (orden === 'desc') return b[campo] - a[campo]; // mayor a menor
+      else return a[campo] - b[campo]; // menor a mayor
     });
     const top = copia.slice(0, limite);
     res.status(200).json({ campo, orden, limite, top });

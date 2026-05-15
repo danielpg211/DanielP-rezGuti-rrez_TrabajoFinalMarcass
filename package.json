@@ -1,0 +1,24 @@
+{
+  "name": "danielp-rezguti-rrez_trabajofinalmarcas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielpg211/DanielP-rezGuti-rrez_TrabajoFinalMarcass.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/danielpg211/DanielP-rezGuti-rrez_TrabajoFinalMarcass/issues"
+  },
+  "homepage": "https://github.com/danielpg211/DanielP-rezGuti-rrez_TrabajoFinalMarcass#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
